@@ -51,7 +51,7 @@ import com.saucelabs.saucerest.SauceREST;
  * @author Ross Rowe
  */
 @SuppressWarnings("unused")
-//@RunWith(ConcurrentParameterized.class)
+@RunWith(ConcurrentParameterized.class)
 public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
 
     /**
@@ -106,29 +106,29 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
      * @param version
      * @param browser
      */
-    /*public SampleSauceTest(String os, String version, String browser) {
+    public SampleSauceTest(String os, String version, String browser) {
         super();
         this.os = os;
         this.version = version;
         this.browser = browser;
-    }*/
+    }
     
-    
+    /*
     public SampleSauceTest() {
         super();
-    }
+    }*/
 
     /**
      * @return a LinkedList containing String arrays representing the browser combinations the test should be run against. The values
      * in the String array are used as part of the invocation of the test constructor
      */
-    /*@ConcurrentParameterized.Parameters
+    @ConcurrentParameterized.Parameters
     public static LinkedList<String[]> browsersStrings() {
         LinkedList<String[]> browsers = new LinkedList<String[]>();
         browsers.add(new String[]{"Windows 7", "42", "chrome"});
         browsers.add(new String[]{"Windows 7", "45", "chrome"});
         return browsers;
-    }*/
+    }
 
     /**
      * Constructs a new {@link RemoteWebDriver} instance which is configured to use the capabilities defined by the {@link #browser},
