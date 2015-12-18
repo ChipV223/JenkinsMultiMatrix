@@ -51,16 +51,16 @@ import com.saucelabs.saucerest.SauceREST;
  * @author Ross Rowe
  */
 @SuppressWarnings("unused")
-@RunWith(ConcurrentParameterized.class)
+//@RunWith(ConcurrentParameterized.class)
 public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
 
     /**
      * Constructs a {@link SauceOnDemandAuthentication} instance using the supplied user name/access key.  To use the authentication
      * supplied by environment variables or from an external file, use the no-arg {@link SauceOnDemandAuthentication} constructor.
      */
-	public static final String USERNAME = System.getenv("SAUCE_USERNAME");
-	public static final String ACCESS_KEY = System.getenv("SAUCE_ACCESS_KEY");
-    public SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication(USERNAME, ACCESS_KEY);
+	public static final String SAUCE_USERNAME = System.getenv("SAUCE_USERNAME");
+	public static final String SAUCE_ACCESS_KEY = System.getenv("SAUCE_ACCESS_KEY");
+	public SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication(SAUCE_USERNAME, SAUCE_ACCESS_KEY);
     
     /**
      * JUnit Rule which will mark the Sauce Job as passed/failed when the test succeeds or fails.
@@ -106,28 +106,29 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
      * @param version
      * @param browser
      */
-    public SampleSauceTest(String os, String version, String browser) {
+    /*public SampleSauceTest(String os, String version, String browser) {
         super();
         this.os = os;
         this.version = version;
         this.browser = browser;
-    }
-    
-    /*public SampleSauceTest() {
-        super();
     }*/
+    
+    
+    public SampleSauceTest() {
+        super();
+    }
 
     /**
      * @return a LinkedList containing String arrays representing the browser combinations the test should be run against. The values
      * in the String array are used as part of the invocation of the test constructor
      */
-    @ConcurrentParameterized.Parameters
+    /*@ConcurrentParameterized.Parameters
     public static LinkedList<String[]> browsersStrings() {
         LinkedList<String[]> browsers = new LinkedList<String[]>();
         browsers.add(new String[]{"Windows 7", "42", "chrome"});
         browsers.add(new String[]{"Windows 7", "45", "chrome"});
         return browsers;
-    }
+    }*/
 
     /**
      * Constructs a new {@link RemoteWebDriver} instance which is configured to use the capabilities defined by the {@link #browser},
@@ -140,26 +141,17 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
     public void setUp() throws Exception {
 
     	DesiredCapabilities caps = new DesiredCapabilities();
-    	ChromeOptions options = new ChromeOptions();
-    	//FirefoxProfile profile = new FirefoxProfile();
-        //caps.setCapability(CapabilityType.BROWSER_NAME, "chrome");
-    	caps.setCapability(CapabilityType.BROWSER_NAME, browser);
-        if (version != null) {
-            caps.setCapability(CapabilityType.VERSION, version);
-        }
-        //caps.setCapability(CapabilityType.VERSION, "45");
-        caps.setCapability(CapabilityType.PLATFORM, os);
-        //caps.setCapability(CapabilityType.PLATFORM, "Windows 7");
-        //profile.setPreference("intl.accept_languages", "es");
-        //options.addArguments("--lang=es");
-        options.addArguments("--start-maximized");
-        caps.setCapability(ChromeOptions.CAPABILITY, options);
-    	//caps.setCapability("version", "39.0");
-        //caps.setCapability("platform", "Windows 7");
-        //caps.setCapability(FirefoxDriver.PROFILE, profile);
+    	caps.setBrowserName(System.getenv("SELENIUM_BROWSER"));
+    	caps.setVersion(System.getenv("SELENIUM_VERSION"));
+    	//caps.setCapability(CapabilityType.BROWSER_NAME, System.getenv(SELENIUM_BROWSER));
+       /* if (version != null) {
+            //caps.setCapability(CapabilityType.VERSION, System.getenv(SELENIUM_VERSION));
+            caps.setVersion(System.getenv("SELENIUM_VERSION"));
+        }*/
+        //caps.setCapability(CapabilityType.VERSION, System.getenv(SELENIUM_VERSION));
+        caps.setCapability(CapabilityType.PLATFORM, System.getenv("SELENIUM_PLATFORM"));
         caps.setCapability("name", name.getMethodName());
         caps.setCapability("public", "public");
-        caps.setCapability("screenResolution", "1680x1050");
         this.driver = new RemoteWebDriver(
                 new URL("http://" + authentication.getUsername() + ":" + authentication.getAccessKey() + "@ondemand.saucelabs.com:80/wd/hub"),caps);
         this.sessionId = (((RemoteWebDriver) driver).getSessionId()).toString();
@@ -175,19 +167,12 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
      */
     
     @Test
-    public void googleTest() throws Exception {
+    public void testGoogle() throws Exception {
     	driver.get("https://www.google.com/");
     	assertEquals("Google", driver.getTitle());
-    	WebElement query = driver.findElement(By.name("q"));
-        query.sendKeys("Sauce Labs");
-        query.submit();
-        Thread.sleep(10000);
-        //File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        // Now you can do whatever you need to do with it, for example copy somewhere
-        //FileUtils.copyFile(scrFile, new File("c:\\tmp\\screenshot.png"));
     }
     
-    /*@Test
+    @Test
     public void testGoogle2() throws Exception {
     	this.testGoogle();
     }
@@ -198,7 +183,10 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
         WebElement query = driver.findElement(By.name("q"));
         query.sendKeys("Sauce Labs");
         query.submit();
-    }*/
+		Thread.sleep(10000);
+		File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile(scrFile, new File("c:\\tmp\\screenshot.png")); // Now you can do whatever you need to do with it, for example copy somewhere
+    }
 
     /**
      * Closes the {@link WebDriver} session.
