@@ -179,12 +179,21 @@ public class SampleSauceTest implements SauceOnDemandSessionIdProvider {
     @Test
     public void testGoogle3() throws Exception {
     	this.testGoogle();
-        WebElement query = driver.findElement(By.name("q"));
+    	WebElement query = driver.findElement(By.name("q"));
         query.sendKeys("Sauce Labs");
+        String ctrlA = Keys.chord(Keys.CONTROL + "a");
+        String ctrlC = Keys.chord(Keys.CONTROL + "c");
+        String ctrlV = Keys.chord(Keys.CONTROL + "V");
+        query.sendKeys(ctrlA);
+        Thread.sleep(10000);
+        query.sendKeys(ctrlC);
+        Thread.sleep(10000);
+        query.sendKeys(Keys.DELETE);
+        Thread.sleep(10000);
+        query.sendKeys(ctrlV);
+        Thread.sleep(10000);
         query.submit();
-		Thread.sleep(10000);
-		File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(scrFile, new File("c:\\tmp\\screenshot.png")); // Now you can do whatever you need to do with it, for example copy somewhere
+        Thread.sleep(5000);
     }
 
     /**
